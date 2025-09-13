@@ -6,6 +6,7 @@ const swaggerJsDoc = require('swagger-jsdoc');
 const passport = require("passport");
 const initializePassport = require("./passportConfig");
 const session = require("express-session");
+const path = require("path");
 
 const home = require('./routes/home')
 const auth = require('./routes/auth')
@@ -61,6 +62,9 @@ app.use(
 )
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.set('view engine', 'ejs')
+app.set('views', path.join(__dirname,'views'));
 
 app.use('/', home);
 app.use('/api/auth', auth);
