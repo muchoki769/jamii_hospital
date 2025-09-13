@@ -8,26 +8,81 @@ const { pool } = require("../database/dbConfig");
  * /api/register:
  *   post:
  *     summary: Register a new patient
+ *     description: Creates a new patient account
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - name
+ *               - email
+ *               - password
+ *               - confirmpassword 
  *             properties:
  *               name:
  *                 type: string
+ *                 description: Full name of the patient
+ *                 example: yohana
  *               email:
  *                 type: string
+ *                 description: Email address of the patient
+ *                 example: yohana@example.com
  *               password:
  *                 type: string
+ *                 description: Password for account
+ *                 example: StrongPassword123
  *               confirmpassword:
  *                 type: string
+ *                 description: Confirm Password
+ *                 example: StrongPassword123
  *     responses:
  *       201:
  *         description: Patient registered successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Patient registered successfully
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     patient_id:
+ *                       type: integer
+ *                       example: 1
+ *                     name:
+ *                       type: string
+ *                       example: yohana
+ *                     email:
+ *                       type: string
+ *                       example: yohana@example.com
  *       400:
- *         description: Bad request
+ *         description: Bad request - Validation failed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Validation failed
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                   example: ["Email already registered", "Passwords do not match"]
+ *       500:
+ *         description: Internal server error
  */
 
 router.get('/', async(req, res) => {
@@ -73,7 +128,9 @@ router.post('/', async(req, res) => {
       (err, results) => {
            if (err) {
           // throw err;
-          return res.status(500).json({ error: "Database error" });
+          // return res.status(500).json({ error: "Database error" });
+          console.error('Database query error:', err); 
+          return res.status(500).json({error: "Database error",details: err.message});
       }
         console.log(results.rows);
 
@@ -82,15 +139,17 @@ router.post('/', async(req, res) => {
           // res.render("register", { errors });
         } else {
                 pool.query(
-                    `INSERT INTO patient (name, email, password_hash) VALUES ($1, $2, $3) RETURNING id,name,email`,
+                    `INSERT INTO patient (name, email, password_hash) VALUES ($1, $2, $3) RETURNING patient_id,name,email`,
                     [name, email, hashedPassword],
                        (err, results) => {
                     if (err) {
                         // throw err;
-                        return res.status(500).json({ error: "Database error" });
+                        // return res.status(500).json({ error: "Database error" });
+                        console.error('Database query error:', err); 
+                        return res.status(500).json({error: "Database error",details: err.message});
               }
               
-              console.log(results.rows);
+              console.log('Insert succesful:',results.rows);
               return res.status(201).json({ status: "ok", user: results.rows[0] });
               
             }

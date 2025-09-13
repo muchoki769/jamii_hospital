@@ -9,16 +9,20 @@ function initialize(passport) {
       [email],
       (err, results) => {
           if (err) {
-          throw err;
+          // throw err;
+                 console.error('Database query error for login:', err); 
+          return res.status(500).json({error: "Database error for login",details: err.message});
         }
         console.log(results.rows);
 
          if (results.rows.length > 0) {
             const user = results.rows[0];
 
-            bcrypt.compare(password, user.password, (err, isMatch) => {
+            bcrypt.compare(password, user.password_hash, (err, isMatch) => {
                   if (err) {
-              throw err;
+              // throw err;
+              console.error('Database query error for login:', err); 
+          return res.status(500).json({error: "Database error for login",details: err.message});
             }
                if (isMatch) {
               return done(null, user);
@@ -43,12 +47,14 @@ function initialize(passport) {
         authenticateUser
     )
   );
-  passport.serializeUser((user, done) => done(null, user.id)); 
+  passport.serializeUser((user, done) => done(null, user.patient_id)); 
 
     passport.deserializeUser((id, done) => {
-         pool.query(`SELECT * FROM patient WHERE id=$1`, [id], (err, results) => {
+         pool.query(`SELECT * FROM patient WHERE patient_id=$1`, [id], (err, results) => {
              if (err) {
-                throw err;
+                // throw err;
+                       console.error('Database query error for login:', err); 
+          return res.status(500).json({error: "Database error for login",details: err.message});
             }
             return done(null, results.rows[0]);
          })
