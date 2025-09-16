@@ -22,7 +22,7 @@ GET	/health	API health check
 # Installation
 
 ```bash
-git clone <your-repo-url>
+git clone <this-repo-url>
 
 npm install
 

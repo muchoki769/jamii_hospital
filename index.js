@@ -14,6 +14,9 @@ const home = require('./routes/home')
 const auth = require('./routes/auth')
 const register = require('./routes/register')
 const login = require('./routes/login')
+const getUsers = require('./routes/getUsers')
+const deleteUsers = require('./routes/deleteUsers')
+const updateUsers = require('./routes/updateUsers')
 const { pool } = require("./database/dbConfig");
 
 
@@ -129,6 +132,9 @@ app.use('/', home);
 app.use('/api/auth', auth);
 app.use('/api/register',register);
 app.use('/api/login',login);
+app.use('/api/getUsers',getUsers);
+app.use('/api/deleteUsers',deleteUsers);
+app.use('/api/updateUsers',updateUsers);
 
 
 app.get('/health', (req, res) => {
@@ -163,7 +169,7 @@ process.on('SIGTERM', () => {
 app.listen(PORT, () => {
     console.log(`Server is running in ${NODE_ENV} mode on port ${PORT}`);
     if(NODE_ENV !== 'production') {
-      console.log(`API Documentation: ${API_URL}/api-docs`);
+      console.log(`API Documentation: ${API_URL}api-docs`);
     }
 })
 
