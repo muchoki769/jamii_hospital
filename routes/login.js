@@ -10,6 +10,7 @@ const initializePassport = require("../passportConfig");
  *   post:
  *     summary: Login a patient
  *     description: Authenticate a patient 
+ *     tags: [Patients]
  *     requestBody:
  *       required: true
  *       content:

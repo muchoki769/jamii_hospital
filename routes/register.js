@@ -9,6 +9,7 @@ const { pool } = require("../database/dbConfig");
  *   post:
  *     summary: Register a new patient
  *     description: Creates a new patient account
+ *     tags: [Patients]
  *     requestBody:
  *       required: true
  *       content:
